@@ -30,5 +30,10 @@ public class MeanFilterSerial{
       }
     }
     
+    for(int i : pixels){
+      System.out.println(pixels);
+    }
+    
+    
     }
 }

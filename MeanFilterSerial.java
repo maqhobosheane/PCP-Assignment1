@@ -26,11 +26,26 @@ public class MeanFilterSerial{
     int winSize = Integer.valueOf(args[2]);
     ArrayList<Integer> pixels = new ArrayList<Integer>();
     
+    
     for(int count = 0; count < width; count++){
       for (int counter = 0; counter < height ; counter++){
         for(int winCount = 0; winCount < winSize;winCount++){
-           for(int winCounter = 0; winCounter < winSize;winCounter++){       
+           for(int winCounter = 0; winCounter < winSize;winCounter++){
+           if(count <= width - winSize && counter <= height - winSize ){       
              sum = sum + input.getRGB(count+winCount,counter+winCounter);
+           }
+           else if(count > width - winSize && counter > height - winSize){
+             sum = sum + input.getRGB(count-winCount,counter-winCounter);
+           }
+           else if(count > width - winSize && counter <= height - winSize){
+           
+             sum = sum + input.getRGB(count-winCount,counter+winCounter);
+             
+           }
+           else if(count <= width - winSize && counter > height - winSize){
+             sum = sum + input.getRGB(count+winCount,counter-winCounter);
+           
+           }
           }
           
         }
@@ -41,6 +56,8 @@ public class MeanFilterSerial{
 
     }
     
+
+   
      //write image
     try{
       f = new File("/home/maqhobosheane/Downloads/Output.jpeg");

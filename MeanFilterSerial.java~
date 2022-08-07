@@ -45,6 +45,7 @@ public class MeanFilterSerial{
     try{
       f = new File("/home/maqhobosheane/Downloads/Output.jpeg");
       ImageIO.write(input, "jpg", f);
+      System.out.println("Image successfully written to.");
     }catch(IOException e){
       System.out.println(e);
     }

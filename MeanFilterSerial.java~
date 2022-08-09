@@ -6,6 +6,10 @@ import java.util.*;
 
 public class MeanFilterSerial{
 
+    int p,a,r,g,b;
+    int sumA,sumR,sumG,sumB;
+    int avgA,avgR,avgG,avgB,avgPixel;
+
     public static void main(String args[])throws IOException{
     BufferedImage input = null;
     BufferedImage output = null;
@@ -14,7 +18,7 @@ public class MeanFilterSerial{
 
     //read image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Image.jpeg");
+      f = new File("/home/maqhobosheane/Downloads/Image.jpg");
       input = ImageIO.read(f);
       output = ImageIO.read(f);
       System.out.println("Image successfully read.");
@@ -22,24 +26,11 @@ public class MeanFilterSerial{
       System.out.println(e);
     }
 
-
     
     int width = input.getWidth();
     int height = input.getHeight();
-    int p;
-    int a;
-    int r;
-    int g;
-    int b;
-    int sumA,sumR,sumG,sumB;
-    int avgA;
-    int avgR;
-    int avgG;
-    int avgB;
-    int avgPixel;
     int winSize = Integer.valueOf(args[2]);
-    ArrayList<Integer> pixels = new ArrayList<Integer>();
-    
+   
     
     for(int x = 0; x < width; x++){
       for (int y = 0; y < height ; y++){
@@ -49,9 +40,9 @@ public class MeanFilterSerial{
         sumG = 0;
         sumB = 0;
         int winSizeUsed = 0;    
-        for(int column = x - winSize/2; column <= x + winSize; column++){
+        for(int column = x - (winSize/2); column <= x + (winSize/2); column++){
         
-           for(int row = y - winSize/2; row <= x + winSize; row++){
+           for(int row = y - (winSize/2); row <= x + (winSize/2); row++){
             
             if(row < 0 || row >= height || column <0 || column >= width){
              continue;
@@ -75,26 +66,33 @@ public class MeanFilterSerial{
           
         }
       
-      if (winSizeUsed > 0){   
+     if (winSize != 0){
         avgA = sumA/(winSizeUsed);
-        avgR = sumA/(winSizeUsed);
-        avgG = sumA/(winSizeUsed);
-        avgB = sumA/(winSizeUsed);
+        avgR = sumR/(winSizeUsed);
+        avgG = sumG/(winSizeUsed);
+        avgB = sumB/(winSizeUsed);    
+    }
+    else if(winSize == 0){
+        avgA = sumA;
+        avgR = sumR;
+        avgG = sumG;
+        avgB = sumB;
+
+
+    }
         avgPixel = (avgA<<24) | (avgR<<16) | (avgG<<8) | avgB;
-        }
-      else{
-        avgPixel = input.getRGB(x,y); 
-      }
-        output.setRGB(x,y,avgPixel);  
+        output.setRGB(x,y,avgPixel);
+          
       }
 
     }
+    
     
 
    
      //write image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Output.jpeg");
+      f = new File("/home/maqhobosheane/Downloads/Output.jpg");
       ImageIO.write(output, "jpg", f);
       System.out.println("Image successfully written to.");
     }catch(IOException e){

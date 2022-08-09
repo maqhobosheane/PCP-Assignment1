@@ -6,6 +6,7 @@ import java.util.*;
 
 public class MeanFilterSerial{
 
+
     public static void main(String args[])throws IOException{
     BufferedImage input = null;
     BufferedImage output = null;
@@ -22,24 +23,18 @@ public class MeanFilterSerial{
       System.out.println(e);
     }
 
-
     
     int width = input.getWidth();
-    int height = input.getHeight();
-    int p;
-    int a;
-    int r;
-    int g;
-    int b;
+    int p,a,r,g,b;
     int sumA,sumR,sumG,sumB;
-    int avgA;
-    int avgR;
-    int avgG;
-    int avgB;
+    int avgA = 0;
+    int avgR = 0;
+    int avgG = 0;
+    int avgB = 0;
     int avgPixel;
+    int height = input.getHeight();
     int winSize = Integer.valueOf(args[2]);
-    ArrayList<Integer> pixels = new ArrayList<Integer>();
-    
+   
     
     for(int x = 0; x < width; x++){
       for (int y = 0; y < height ; y++){
@@ -49,9 +44,9 @@ public class MeanFilterSerial{
         sumG = 0;
         sumB = 0;
         int winSizeUsed = 0;    
-        for(int column = x - winSize/2; column <= x + winSize; column++){
+        for(int column = x - (winSize/2); column <= x + (winSize/2); column++){
         
-           for(int row = y - winSize/2; row <= x + winSize; row++){
+           for(int row = y - (winSize/2); row <= x + (winSize/2); row++){
             
             if(row < 0 || row >= height || column <0 || column >= width){
              continue;
@@ -75,20 +70,27 @@ public class MeanFilterSerial{
           
         }
       
-      if (winSizeUsed > 0){   
+     if (winSize != 0){
         avgA = sumA/(winSizeUsed);
-        avgR = sumA/(winSizeUsed);
-        avgG = sumA/(winSizeUsed);
-        avgB = sumA/(winSizeUsed);
+        avgR = sumR/(winSizeUsed);
+        avgG = sumG/(winSizeUsed);
+        avgB = sumB/(winSizeUsed);    
+    }
+    else if(winSize == 0){
+        avgA = sumA;
+        avgR = sumR;
+        avgG = sumG;
+        avgB = sumB;
+
+
+    }
         avgPixel = (avgA<<24) | (avgR<<16) | (avgG<<8) | avgB;
-        }
-      else{
-        avgPixel = input.getRGB(x,y); 
-      }
-        output.setRGB(x,y,avgPixel);  
+        output.setRGB(x,y,avgPixel);
+          
       }
 
     }
+    
     
 
    

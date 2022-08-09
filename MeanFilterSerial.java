@@ -15,7 +15,7 @@ public class MeanFilterSerial{
 
     //read image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Image.jpg");
+      f = new File("/home/maqhobosheane/Downloads/Image.jpeg");
       input = ImageIO.read(f);
       output = ImageIO.read(f);
       System.out.println("Image successfully read.");
@@ -70,22 +70,19 @@ public class MeanFilterSerial{
           
         }
       
-     if (winSize != 0){
+    
+      if (winSizeUsed > 0){   
         avgA = sumA/(winSizeUsed);
         avgR = sumR/(winSizeUsed);
         avgG = sumG/(winSizeUsed);
-        avgB = sumB/(winSizeUsed);    
-    }
-    else if(winSize == 0){
-        avgA = sumA;
-        avgR = sumR;
-        avgG = sumG;
-        avgB = sumB;
-
-
-    }
+        avgB = sumB/(winSizeUsed);
         avgPixel = (avgA<<24) | (avgR<<16) | (avgG<<8) | avgB;
-        output.setRGB(x,y,avgPixel);
+          
+        }
+      else{
+        avgPixel = input.getRGB(x,y); 
+      }
+        output.setRGB(x,y,avgPixel); 
           
       }
 
@@ -96,7 +93,7 @@ public class MeanFilterSerial{
    
      //write image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Output.jpg");
+      f = new File("/home/maqhobosheane/Downloads/Output.jpeg");
       ImageIO.write(output, "jpg", f);
       System.out.println("Image successfully written to.");
     }catch(IOException e){

@@ -6,9 +6,6 @@ import java.util.*;
 
 public class MeanFilterSerial{
 
-    int p,a,r,g,b;
-    int sumA,sumR,sumG,sumB;
-    int avgA,avgR,avgG,avgB,avgPixel;
 
     public static void main(String args[])throws IOException{
     BufferedImage input = null;
@@ -28,6 +25,13 @@ public class MeanFilterSerial{
 
     
     int width = input.getWidth();
+    int p,a,r,g,b;
+    int sumA,sumR,sumG,sumB;
+    int avgA = 0;
+    int avgR = 0;
+    int avgG = 0;
+    int avgB = 0;
+    int avgPixel;
     int height = input.getHeight();
     int winSize = Integer.valueOf(args[2]);
    
@@ -66,22 +70,19 @@ public class MeanFilterSerial{
           
         }
       
-     if (winSize != 0){
+    
+      if (winSizeUsed > 0){   
         avgA = sumA/(winSizeUsed);
         avgR = sumR/(winSizeUsed);
         avgG = sumG/(winSizeUsed);
-        avgB = sumB/(winSizeUsed);    
-    }
-    else if(winSize == 0){
-        avgA = sumA;
-        avgR = sumR;
-        avgG = sumG;
-        avgB = sumB;
-
-
-    }
+        avgB = sumB/(winSizeUsed);
         avgPixel = (avgA<<24) | (avgR<<16) | (avgG<<8) | avgB;
-        output.setRGB(x,y,avgPixel);
+          
+        }
+      else{
+        avgPixel = input.getRGB(x,y); 
+      }
+        output.setRGB(x,y,avgPixel); 
           
       }
 

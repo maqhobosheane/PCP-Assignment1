@@ -4,16 +4,15 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.util.*;
 
-public class MeanFilterSerial{
-
-
-    public static void main(String args[])throws IOException{
-    BufferedImage input = null;
-    BufferedImage output = null;
-    File f = null;
+public class MedianFilterSerial{
     
-
-    //read image
+    public static void main(String [] args){
+    
+        BufferedImage input = null;
+        BufferedImage output = null;
+        File f = null;
+        
+        //read image
     try{
       f = new File("/home/maqhobosheane/Downloads/Image.jpg");
       input = ImageIO.read(f);
@@ -23,27 +22,22 @@ public class MeanFilterSerial{
       System.out.println(e);
     }
 
-    
+
     int width = input.getWidth();
     int p,a,r,g,b;
-    int sumA,sumR,sumG,sumB;
-    int avgA = 0;
-    int avgR = 0;
-    int avgG = 0;
-    int avgB = 0;
-    int avgPixel;
+    int medianA,medianR,medianG,medianB,medianPixel;
     int height = input.getHeight();
     int winSize = Integer.valueOf(args[2]);
-   
+    int[] outputA = new int[winSize*winSize];
+    int[] outputR = new int[winSize*winSize];
+    int[] outputG = new int[winSize*winSize];
+    int[] outputB = new int[winSize*winSize];
     
-    for(int x = 0; x < width; x++){
+      for(int x = 0; x < width; x++){
       for (int y = 0; y < height ; y++){
       
-        sumA = 0;
-        sumR = 0;
-        sumG = 0;
-        sumB = 0;
-        int winSizeUsed = 0;    
+        
+        int count = 0;    
         for(int column = x - (winSize/2); column <= x + (winSize/2); column++){
         
            for(int row = y - (winSize/2); row <= y + (winSize/2); row++){
@@ -58,40 +52,35 @@ public class MeanFilterSerial{
              r = (p>>16) & 0xff;
              g = (p>>8) & 0xff;   
              b = p & 0xff;   
-             sumA = sumA + a;
-             sumR = sumR + r;
-             sumG = sumG + g;
-             sumB = sumB + b;
-             winSizeUsed++;
+             outputA[count] = a;
+             outputR[count] = r;
+             outputG[count] = g;
+             outputB[count] = b;
+             count++;
            }
         
           }
           
           
         }
-      
-    
-      if (winSizeUsed > 0){   
-        avgA = sumA/(winSizeUsed);
-        avgR = sumR/(winSizeUsed);
-        avgG = sumG/(winSizeUsed);
-        avgB = sumB/(winSizeUsed);
-        avgPixel = (avgA<<24) | (avgR<<16) | (avgG<<8) | avgB;
-          
-        }
-      else{
-        avgPixel = input.getRGB(x,y); 
-      }
-        output.setRGB(x,y,avgPixel); 
-          
-      }
+        
+        Arrays.sort(outputA);
+        Arrays.sort(outputR);
+        Arrays.sort(outputG);
+        Arrays.sort(outputB);
+        medianA = outputA[count/2];
+        medianR = outputR[count/2];
+        medianG = outputG[count/2];
+        medianB = outputR[count/2];
+        medianPixel = (medianA<<24) | (medianR<<16) | (medianG<<8) | medianB;
+
+        output.setRGB(x,y,medianPixel);
+        
+        
+    }
 
     }
-    
-    
-
-   
-     //write image
+    //write image
     try{
       f = new File("/home/maqhobosheane/Downloads/Output.jpg");
       ImageIO.write(output, "jpg", f);

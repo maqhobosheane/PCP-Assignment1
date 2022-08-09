@@ -46,7 +46,7 @@ public class MeanFilterSerial{
         int winSizeUsed = 0;    
         for(int column = x - (winSize/2); column <= x + (winSize/2); column++){
         
-           for(int row = y - (winSize/2); row <= x + (winSize/2); row++){
+           for(int row = y - (winSize/2); row <= y + (winSize/2); row++){
             
             if(row < 0 || row >= height || column <0 || column >= width){
              continue;

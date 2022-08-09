@@ -8,27 +8,30 @@ public class MeanFilterSerial{
 
     public static void main(String args[])throws IOException{
     BufferedImage input = null;
+    BufferedImage output = null;
     File f = null;
+    
 
     //read image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Image.jpg");
+      f = new File("/home/maqhobosheane/Downloads/Image.jpeg");
       input = ImageIO.read(f);
+      output = ImageIO.read(f);
       System.out.println("Image successfully read.");
     }catch(IOException e){
       System.out.println(e);
     }
+
+
     
     int width = input.getWidth();
     int height = input.getHeight();
+    int p;
     int a;
     int r;
     int g;
     int b;
-    int sumA = 0;
-    int sumR = 0;
-    int sumG = 0;
-    int sumB = 0;
+    int sumA,sumR,sumG,sumB;
     int avgA;
     int avgR;
     int avgG;
@@ -38,12 +41,24 @@ public class MeanFilterSerial{
     ArrayList<Integer> pixels = new ArrayList<Integer>();
     
     
-    for(int count = 0; count < width; count++){
-      for (int counter = 0; counter < height ; counter++){
-        for(int winCount = 0; winCount < winSize;winCount++){
-           for(int winCounter = 0; winCounter < winSize;winCounter++){
-           if(count <= width - winSize && counter <= height - winSize ){ 
-             p = input.getRGB(count + winCount,counter + winCounter);
+    for(int x = 0; x < width; x++){
+      for (int y = 0; y < height ; y++){
+      
+        sumA = 0;
+        sumR = 0;
+        sumG = 0;
+        sumB = 0;
+        int winSizeUsed = 0;    
+        for(int column = x - winSize/2; column <= x + winSize; column++){
+        
+           for(int row = y - winSize/2; row <= x + winSize; row++){
+            
+            if(row < 0 || row >= height || column <0 || column >= width){
+             continue;
+            }
+            
+            else{ 
+             p = input.getRGB(column,row);
              a = (p>>24) & 0xff;
              r = (p>>16) & 0xff;
              g = (p>>8) & 0xff;   
@@ -52,53 +67,25 @@ public class MeanFilterSerial{
              sumR = sumR + r;
              sumG = sumG + g;
              sumB = sumB + b;
+             winSizeUsed++;
            }
-           else if(count > width - winSize && counter > height - winSize){
-             p = input.getRGB(count - winCount,counter - winCounter);
-             a = (p>>24) & 0xff;
-             r = (p>>16) & 0xff;
-             g = (p>>8) & 0xff;   
-             b = p & 0xff;   
-             sumA = sumA + a;
-             sumR = sumR + r;
-             sumG = sumG + g;
-             sumB = sumB + b;
-           }
-           else if(count > width - winSize && counter <= height - winSize){
-           
-             p = input.getRGB(count - winCount,counter + winCounter);
-             a = (p>>24) & 0xff;
-             r = (p>>16) & 0xff;
-             g = (p>>8) & 0xff;   
-             b = p & 0xff;   
-             sumA = sumA + a;
-             sumR = sumR + r;
-             sumG = sumG + g;
-             sumB = sumB + b;
-             
-           }
-           else if(count <= width - winSize && counter > height - winSize){
-             p = input.getRGB(count + winCount,counter - winCounter);
-             a = (p>>24) & 0xff;
-             r = (p>>16) & 0xff;
-             g = (p>>8) & 0xff;   
-             b = p & 0xff;   
-             sumA = sumA + a;
-             sumR = sumR + r;
-             sumG = sumG + g;
-             sumB = sumB + b;
-           
-           }
+        
           }
           
+          
         }
-         
-        avgA = sumA/(winSize*winSize);
-        avgR = sumA/(winSize*winSize);
-        avgG = sumA/(winSize*winSize);
-        avgB = sumA/(winSize*winSize);
+      
+      if (winSizeUsed > 0){   
+        avgA = sumA/(winSizeUsed);
+        avgR = sumA/(winSizeUsed);
+        avgG = sumA/(winSizeUsed);
+        avgB = sumA/(winSizeUsed);
         avgPixel = (avgA<<24) | (avgR<<16) | (avgG<<8) | avgB;
-        input.setRGB(count,counter,avgPixel);  
+        }
+      else{
+        avgPixel = input.getRGB(x,y); 
+      }
+        output.setRGB(x,y,avgPixel);  
       }
 
     }
@@ -107,8 +94,8 @@ public class MeanFilterSerial{
    
      //write image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Output.jpg");
-      ImageIO.write(input, "jpg", f);
+      f = new File("/home/maqhobosheane/Downloads/Output.jpeg");
+      ImageIO.write(output, "jpg", f);
       System.out.println("Image successfully written to.");
     }catch(IOException e){
       System.out.println(e);

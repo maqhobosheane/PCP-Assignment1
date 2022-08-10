@@ -34,7 +34,7 @@ public class MedianFilterSerial{
     int[] outputB = new int[winSize*winSize];
     
       for(int x = 0; x < width; x++){
-      for (int y = 0; y < height ; y++){
+        for (int y = 0; y < height ; y++){
         p = input.getRGB(x,y);
         a = (p>>24) & 0xff;
         int count = 0;    
@@ -64,14 +64,14 @@ public class MedianFilterSerial{
           
         }
         
-        Arrays.sort(outputA);
+        
         Arrays.sort(outputR);
         Arrays.sort(outputG);
         Arrays.sort(outputB);
         
-        medianR = outputR[count/2];
-        medianG = outputG[count/2];
-        medianB = outputR[count/2];
+        medianR = outputR[outputR.length/2];
+        medianG = outputG[outputG.length/2];
+        medianB = outputB[outputB.length/2];
         medianPixel = a | (medianR<<16) | (medianG<<8) | medianB;
 
         output.setRGB(x,y,medianPixel);

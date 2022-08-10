@@ -25,18 +25,18 @@ public class MedianFilterSerial{
 
     int width = input.getWidth();
     int p,a,r,g,b;
-    int medianR,medianG,medianB,medianPixel;
+    int medianA,medianR,medianG,medianB,medianPixel;
     int height = input.getHeight();
     int winSize = Integer.valueOf(args[2]);
     
+    int[] outputA = new int[winSize*winSize];
     int[] outputR = new int[winSize*winSize];
     int[] outputG = new int[winSize*winSize];
     int[] outputB = new int[winSize*winSize];
     
       for(int x = 0; x < width; x++){
-      for (int y = 0; y < height ; y++){
-        p = input.getRGB(x,y);
-        a = (p>>24) & 0xff;
+        for (int y = 0; y < height ; y++){
+  
         int count = 0;    
         for(int column = x - (winSize/2); column <= x + (winSize/2); column++){
               
@@ -48,11 +48,12 @@ public class MedianFilterSerial{
             
             else{ 
              p = input.getRGB(column,row);
-             
+             a = (p>>24) & 0xff;
              r = (p>>16) & 0xff;
              g = (p>>8) & 0xff;   
              b = p & 0xff;   
              
+             outputA[count] = a;
              outputR[count] = r;
              outputG[count] = g;
              outputB[count] = b;
@@ -64,15 +65,16 @@ public class MedianFilterSerial{
           
         }
         
-        
+        Arrays.sort(outputA);
         Arrays.sort(outputR);
         Arrays.sort(outputG);
         Arrays.sort(outputB);
         
-        medianR = outputR[count/2];
-        medianG = outputG[count/2];
-        medianB = outputR[count/2];
-        medianPixel = a | (medianR<<16) | (medianG<<8) | medianB;
+        medianA = outputA[outputA.length/2];
+        medianR = outputR[outputR.length/2];
+        medianG = outputG[outputG.length/2];
+        medianB = outputB[outputB.length/2];
+        medianPixel = (medianA<<24) | (medianR<<16) | (medianG<<8) | medianB;
 
         output.setRGB(x,y,medianPixel);
         

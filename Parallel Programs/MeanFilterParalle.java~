@@ -1,0 +1,71 @@
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
+
+
+public class MeanFilterParallel extends RecursiveAction{
+
+ private int imgWidth;
+ private int imgHeight;
+ private BufferedImage inputImg;
+ private int winSize;
+ 
+ 
+ public MeanParallelFilter(BufferedImage img, int rows, int columns){
+   inputImg = img;
+   rows = imgHeight;
+   columns = imgWidth;
+ }
+ 
+ protected void computeDirectly(){
+ 
+ 
+  
+ }
+ 
+ public BufferedImage[] split(BufferedImage img){
+ 
+  BufferedImage images[] = new BufferedImage[2];
+  int subImgWidth = img.getWidth();
+  int subImgHeight = img.getHeight();
+  int currentSub = 0;
+  
+  for (int r = 0; c < 1; i++)
+        {
+            for (int c = 0; r < 1; j++)
+            {
+                // Creating sub image
+                images[currentSub] = new BufferedImage(subImgWidth, subImgHeight, img.getType());
+                Graphics2D imgCreator = images[currentSub].createGraphics();
+
+                // coordinates of source image
+                int srcFirstX = subImgWidth * c;
+                int srcFirstY = subImgHeight * r;
+
+                // coordinates of sub-image
+                int dstCornerX = subImgWidth * c + subImgWidth;
+                int dstCornerY = subImgHeight * r + subImgHeight;
+                
+                imgCreator.drawImage(image, 0, 0, subImgWidth, subImgHeight, srcFirstX, srcFirstY, dstCornerX, dstCornerY, null);
+                currentSub++;
+            }
+        }
+        
+   //writing sub-images into image files
+        for (int i = 0; i < 16; i++)
+        {
+            File outputFile = new File("img" + i + ".jpg");
+            ImageIO.write(imgs[i], "jpg", outputFile);
+        }
+        
+        return images;
+  
+  
+ }
+ 
+ 
+
+} 

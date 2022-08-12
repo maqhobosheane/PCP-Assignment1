@@ -1,0 +1,2 @@
+MeanFilterParallel.class: MeanFilterParallel.java
+	javac MeanFilterParallel.java

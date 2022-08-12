@@ -33,11 +33,12 @@ public class MedianFilterSerial{
     int[] outputR = new int[winSize*winSize];
     int[] outputG = new int[winSize*winSize];
     int[] outputB = new int[winSize*winSize];
+
     
       for(int x = 0; x < width; x++){
         for (int y = 0; y < height ; y++){
   
-        int count = 0;    
+        int count = 0;     
         for(int column = x - (winSize/2); column <= x + (winSize/2); column++){
               
            for(int row = y - (winSize/2); row <= y + (winSize/2); row++){

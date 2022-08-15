@@ -23,7 +23,7 @@ public class MeanFilterSerial{
       System.out.println("Input image not found.");
     }
     
-    if(args[2] < 3 || args[2]%2 != 1){
+    if(Integer.valueOf(args[2]) < 3 || (Integer.valueOf(args[2]))%2 != 1){
     	System.out.println("Invalid window width.The window width should be an odd number greater than 3.");
     }
 

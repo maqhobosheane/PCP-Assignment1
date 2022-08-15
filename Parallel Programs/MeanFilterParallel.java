@@ -23,7 +23,7 @@ public class MeanFilterParallel extends RecursiveAction{
    startingY = startY;
    lastY = endY;
    winSize = kernelSize;
-   
+  
  }
 
  protected void computeDirectly(){
@@ -38,30 +38,24 @@ public class MeanFilterParallel extends RecursiveAction{
     
        
       
-     for(int y = startingY; y < lastY; y++){
-      for (int x = 0 ; x < imgWidth ; x++){
-      
-      
+    for(int y = startingY ; y < lastY; y++){
+      for (int x = 0; x < imgWidth ; x++){
+      	int surroundPixels = (winSize - 1) / 2;
         sumA = 0;
         sumR = 0;
         sumG = 0;
         sumB = 0;
-        int surroundPixels = (winSize- 1) / 2;
-        int halfWindowWidth = (winSize-1)/2;
-        
-        
-        
         int winSizeUsed = 0;    
-        for(int row = -surroundPixels; row <= surroundPixels; row++){
+        for(int column = -surroundPixels; column <= surroundPixels; column++){
         
-           for(int column = -surroundPixels; column <= surroundPixels; column++){
+           for(int row = -surroundPixels; row <= surroundPixels; row++){
             
-            if(row+y < 0 || row+y >= lastY || column+x <0 || column+x >= imgWidth){
+            if((row+y) < 0 || (row+y) >= lastY || (column+x) <0 || (column+x) >= imgWidth){
              continue;
             }
             
             else{ 
-             p = inputImg.getRGB(x+column,y+row);
+             p = inputImg.getRGB(column + x,row + y);
              a = (p>>24) & 0xff;
              r = (p>>16) & 0xff;
              g = (p>>8) & 0xff;   
@@ -99,7 +93,7 @@ public class MeanFilterParallel extends RecursiveAction{
   
  }
  
- protected static int pixelThreshold = 10000;
+ protected static int pixelThreshold = 100000;
 
     @Override
     protected void compute() {
@@ -111,10 +105,11 @@ public class MeanFilterParallel extends RecursiveAction{
         }
         
         
-        int split = imgHeight/2;
+        int split = ((lastY + startingY)/2);
+        
 	
-	MeanFilterParallel upper = new MeanFilterParallel(inputImg, imgHeight, imgWidth, winSize,startingY, (startingY+lastY)/2 );
-	MeanFilterParallel lower = new MeanFilterParallel(inputImg, imgHeight, imgWidth, winSize, (startingY+lastY)/2, lastY);
+	MeanFilterParallel upper = new MeanFilterParallel(inputImg, imgHeight, imgWidth, winSize,startingY, split );
+	MeanFilterParallel lower = new MeanFilterParallel(inputImg, imgHeight, imgWidth, winSize, split, lastY);
 	upper.fork();
 	lower.compute();
 	upper.join();	

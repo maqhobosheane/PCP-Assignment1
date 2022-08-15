@@ -1,5 +1,3 @@
 MedianFilterSerial.class: MedianFilterSerial.java
 	javac MedianFilterSerial.java
 	
-MeanFilterParallel.class: MeanFilterParallel.java
-	javac MeanFilterParallel.java

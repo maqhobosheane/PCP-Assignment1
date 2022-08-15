@@ -14,7 +14,7 @@ public class MedianFilterSerial{
         
         //read image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Image.jpg");
+      f = new File(args[0]);
       input = ImageIO.read(f);
       output = ImageIO.read(f);
       System.out.println("Image successfully read.");
@@ -85,7 +85,7 @@ public class MedianFilterSerial{
     }
     //write image
     try{
-      f = new File("/home/maqhobosheane/Downloads/Output.jpg");
+      f = new File(args[1]);
       ImageIO.write(output, "jpg", f);
       System.out.println("Image successfully written to.");
     }catch(IOException e){

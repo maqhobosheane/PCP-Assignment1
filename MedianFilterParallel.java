@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import javax.imageio.ImageIO;
+import java.util.Arrays;
 
-public class MeanFilterParallel extends RecursiveAction{
+public class MedianFilterParallel extends RecursiveAction{
 
  private int imgWidth;
  private int imgHeight;
@@ -16,55 +17,54 @@ public class MeanFilterParallel extends RecursiveAction{
  public static BufferedImage output;
  
  
- public MeanFilterParallel(BufferedImage img, int rows, int columns, int kernelSize,int startY, int endY){
+ public MedianFilterParallel(BufferedImage img, int rows, int columns, int kernelSize,int startY, int endY){
    inputImg = img;
    imgHeight = rows;
    imgWidth = columns;
    startingY = startY;
    lastY = endY;
    winSize = kernelSize;
-  
  }
 
  protected void computeDirectly(){
   
     int p,a,r,g,b;
-    int sumA,sumR,sumG,sumB;
-    int avgA = 0;
-    int avgR = 0;
-    int avgG = 0;
-    int avgB = 0;
-    int avgPixel;
+    int medianA,medianR,medianG,medianB,medianPixel;
     
+    int[] outputA = new int[winSize*winSize];
+    int[] outputR = new int[winSize*winSize];
+    int[] outputG = new int[winSize*winSize];
+    int[] outputB = new int[winSize*winSize];
        
       
-    for(int y = startingY ; y < lastY; y++){
-      for (int x = 0; x < imgWidth ; x++){
-      	int surroundPixels = (winSize - 1) / 2;
-        sumA = 0;
-        sumR = 0;
-        sumG = 0;
-        sumB = 0;
-        int winSizeUsed = 0;    
-        for(int column = -surroundPixels; column <= surroundPixels; column++){
+     for(int y = startingY; y < lastY; y++){
+      for (int x = 0 ; x < imgWidth ; x++){
+      
+      
+        int surroundPixels = (winSize- 1) / 2;
+        int halfWindowWidth = (winSize-1)/2;
         
-           for(int row = -surroundPixels; row <= surroundPixels; row++){
+        int count = 0;    
+        for(int row = -surroundPixels; row <= surroundPixels; row++){
+        
+           for(int column = -surroundPixels; column <= surroundPixels; column++){
             
-            if((row+y) < 0 || (row+y) >= lastY || (column+x) <0 || (column+x) >= imgWidth){
+            if(row+y < 0 || row+y >= lastY || column+x <0 || column+x >= imgWidth){
              continue;
             }
             
             else{ 
-             p = inputImg.getRGB(column + x,row + y);
+             p = inputImg.getRGB(x+column,y+row);
              a = (p>>24) & 0xff;
              r = (p>>16) & 0xff;
              g = (p>>8) & 0xff;   
              b = p & 0xff;   
-             sumA = sumA + a;
-             sumR = sumR + r;
-             sumG = sumG + g;
-             sumB = sumB + b;
-             winSizeUsed++;
+             
+             outputA[count] = a;
+             outputR[count] = r;
+             outputG[count] = g;
+             outputB[count] = b;
+             count++;
            }
         
           }
@@ -72,20 +72,18 @@ public class MeanFilterParallel extends RecursiveAction{
           
         }
       
-    
-      if (winSizeUsed > 0){   
-        avgA = sumA/(winSizeUsed);
-        avgR = sumR/(winSizeUsed);
-        avgG = sumG/(winSizeUsed);
-        avgB = sumB/(winSizeUsed);
-        avgPixel = (avgA<<24) | (avgR<<16) | (avgG<<8) | avgB;
-          
-        }
-      else{
-        avgPixel = inputImg.getRGB(x,y); 
-      }
-         
-        output.setRGB(x,y,avgPixel); 
+    	 Arrays.sort(outputA);
+        Arrays.sort(outputR);
+        Arrays.sort(outputG);
+        Arrays.sort(outputB);
+        
+        medianA = outputA[outputA.length/2];
+        medianR = outputR[outputR.length/2];
+        medianG = outputG[outputG.length/2];
+        medianB = outputB[outputB.length/2];
+        medianPixel = (medianA<<24) | (medianR<<16) | (medianG<<8) | medianB;
+ 
+        output.setRGB(x,y,medianPixel); 
           
       }
 
@@ -93,7 +91,7 @@ public class MeanFilterParallel extends RecursiveAction{
   
  }
  
- protected static int pixelThreshold = 10000;
+ protected static int pixelThreshold = 100000;
 
     @Override
     protected void compute() {
@@ -105,11 +103,10 @@ public class MeanFilterParallel extends RecursiveAction{
         }
         
         
-        int split = ((lastY + startingY)/2);
-        
+        int split = (startingY+lastY)/2;
 	
-	MeanFilterParallel upper = new MeanFilterParallel(inputImg, imgHeight, imgWidth, winSize,startingY, split );
-	MeanFilterParallel lower = new MeanFilterParallel(inputImg, imgHeight, imgWidth, winSize, split, lastY);
+	MedianFilterParallel upper = new MedianFilterParallel(inputImg, imgHeight, imgWidth, winSize,startingY, split );
+	MedianFilterParallel lower = new MedianFilterParallel(inputImg, imgHeight, imgWidth, winSize, split, lastY);
 	upper.fork();
 	lower.compute();
 	upper.join();	
@@ -136,7 +133,7 @@ public class MeanFilterParallel extends RecursiveAction{
      int w = src.getWidth();
      int h = src.getHeight();
      int winSize = Integer.valueOf(args[2]);
-     MeanFilterParallel meanFilter = new MeanFilterParallel(src, h, w,winSize, 0, h ); 
+     MedianFilterParallel meanFilter = new MedianFilterParallel(src, h, w,winSize, 0, h ); 
      ForkJoinPool pool = new ForkJoinPool(); 
      pool.invoke(meanFilter);
      
@@ -154,5 +151,4 @@ public class MeanFilterParallel extends RecursiveAction{
  
  	
 
-}	
-
+}

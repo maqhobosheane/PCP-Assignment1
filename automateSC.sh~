@@ -1,0 +1,7 @@
+for file in Images/*
+do 
+	for i in {10000..10000000..1250000}
+	do
+		java -cp bin MedianFilterParallel $file Output.jpg $i>> median_SC.csv
+	done
+done

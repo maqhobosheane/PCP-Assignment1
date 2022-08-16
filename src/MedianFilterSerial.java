@@ -17,11 +17,16 @@ public class MedianFilterSerial{
       f = new File(args[0]);
       input = ImageIO.read(f);
       output = ImageIO.read(f);
-      System.out.println("Image successfully read.");
+      
     }catch(IOException e){
-      System.out.println(e);
+      System.out.println("Input image not found.");
+      System.exit(0);
     }
 
+	if(Integer.valueOf(args[2]) < 3 || (Integer.valueOf(args[2]))%2 != 1){
+    		System.out.println("Invalid window width.The window width should be an odd number greater than or equal to 3.");
+    		System.exit(0);
+    	}
 
     int width = input.getWidth();
     int p,a,r,g,b;
@@ -29,12 +34,14 @@ public class MedianFilterSerial{
     int height = input.getHeight();
     int winSize = Integer.valueOf(args[2]);
     
+    
+    
     int[] outputA = new int[winSize*winSize];
     int[] outputR = new int[winSize*winSize];
     int[] outputG = new int[winSize*winSize];
     int[] outputB = new int[winSize*winSize];
 
-    
+  long startTime = System.currentTimeMillis();    
       for(int x = 0; x < width; x++){
         for (int y = 0; y < height ; y++){
   
@@ -83,13 +90,18 @@ public class MedianFilterSerial{
     }
 
     }
+    long endTime = System.currentTimeMillis();
+    int cores = Runtime.getRuntime().availableProcessors();//Get number of cores in use
+    System.out.println(winSize+","+(height*width)+","+(endTime - startTime)+","+cores);  
+    
     //write image
     try{
       f = new File(args[1]);
       ImageIO.write(output, "jpg", f);
-      System.out.println("Image successfully written to.");
+      
     }catch(IOException e){
-      System.out.println(e);
+      System.out.println("Image output directory not found.");
+      System.exit(0);
     }
     
     }

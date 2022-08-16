@@ -1,0 +1,3 @@
+
+# using all four cores
+taskset -c 0,1,2,3 bash automation.sh 

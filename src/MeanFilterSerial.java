@@ -18,13 +18,14 @@ public class MeanFilterSerial{
       f = new File(args[0]);
       input = ImageIO.read(f);
       output = ImageIO.read(f);
-      System.out.println("Image successfully read.");
     }catch(IOException e){
       System.out.println("Input image not found.");
+      System.exit(0);
     }
     
     if(Integer.valueOf(args[2]) < 3 || (Integer.valueOf(args[2]))%2 != 1){
-    	System.out.println("Invalid window width.The window width should be an odd number greater than 3.");
+    	System.out.println("Invalid window width.The window width should be an odd number greater than or equal to 3.");
+    	System.exit(0);
     }
 
 
@@ -40,8 +41,9 @@ public class MeanFilterSerial{
     int height = input.getHeight();
     int winSize = Integer.valueOf(args[2]);
     System.out.println("Image size is " + height + "x" + width);
+    System.out.println("Filter size: " + winSize);
    
-    long startTime = System.currentTimeMillis();   
+   long startTime = System.currentTimeMillis();   
     for(int x = 0; x < width; x++){
       for (int y = 0; y < height ; y++){
       
@@ -105,6 +107,7 @@ public class MeanFilterSerial{
      
     }catch(IOException e){
       System.out.println("Image output directory not found.");
+      System.exit(0);
     }
     
     }
